@@ -11,7 +11,31 @@ app.get("/users", (req, res) => {
 });
 
 app.get("/products", (req, res) => {
-  req.res("products");
+  res.render("products");
+});
+
+app.get("/homepage", (req, res) => {
+  res.render("homepage");
+});
+
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+app.get("/signUp", (req, res) => {
+  res.render("signUp");
+});
+
+app.get("/paris", (req, res) => {
+  res.render("paris");
+});
+
+app.get("/lyon", (req, res) => {
+  res.render("lyon");
+});
+
+app.get("/marseille", (req, res) => {
+  res.render("marseille");
 });
 
 app.listen(8001, () => console.log("listening"));
