@@ -1,6 +1,26 @@
 const express = require("express");
 const handlebars = require("express-handlebars");
+const mongoose = require("mongoose");
+const path = require("path");
+const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
 const app = express();
+const User = require("./models/userModel");
+app.use(express.json());
+app.use(cookieParser());
+
+//CONNECT TO DB
+mongoose
+  .connect(
+    "mongodb+srv://chariotte:DMDmw0jaSSJOqRaB@cluster0.kuvm7.mongodb.net/bonPlan?retryWrites=true&w=majority",
+    {
+      useNewUrlParser: true,
+    }
+  )
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => {
+    console.log(err);
+  });
 
 app.engine("handlebars", handlebars.engine());
 app.set("view engine", "handlebars");
@@ -24,6 +44,18 @@ app.get("/login", (req, res) => {
 
 app.get("/signUp", (req, res) => {
   res.render("signUp");
+});
+app.post("/signUp", async (req, res) => {
+  const hashedPassword = await bcrypt.hash(req.body.password, 8);
+  try {
+    await User.create({
+      name: req.body.name,
+      password: hashedPassword,
+    });
+  } catch (err) {
+    return res.status(400).json({ message: err });
+  }
+  res.status(201).json({ message: "User created" });
 });
 
 app.get("/paris", (req, res) => {
