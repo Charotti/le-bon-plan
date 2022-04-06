@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const secret = "1rtyf6OZjepB63xRwyNSkk0czzttHKjXNQk000qzp";
 const app = express();
 const User = require("./models/userModel");
+const jwt = require("jsonwebtoken");
 app.use(express.json());
 app.use(cookieParser());
 
@@ -63,6 +64,37 @@ app.post("/signup", async (req, res) => {
   }
   // res.status(201).json({ message: "User created" });
   res.redirect("/profile");
+});
+
+app.post("/login", async (req, res) => {
+  const { name, password } = req.body;
+  console.log(name, password, req.body);
+
+  try {
+    const user = await User.findOne({ name });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid name or password",
+      });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        message: "Invalid name or password",
+      });
+    }
+
+    const token = jwt.sign({ id: user._id }, secret);
+    res.cookie("jwt", token, { httpOnly: true, secure: false });
+  } catch (err) {
+    console.log("err:", err);
+    return res.status(400).json({
+      success: false,
+      message: "Invalid name or password",
+    });
+  }
+  res.redirect("/homepage");
 });
 
 app.get("/paris", (req, res) => {
