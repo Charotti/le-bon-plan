@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
+const secret = "1rtyf6OZjepB63xRwyNSkk0czzttHKjXNQk000qzp";
 const app = express();
 const User = require("./models/userModel");
 app.use(express.json());
@@ -45,7 +46,11 @@ app.get("/login", (req, res) => {
 app.get("/signUp", (req, res) => {
   res.render("signUp");
 });
-app.post("/signUp", async (req, res) => {
+
+app.get("/profile", (req, res) => {
+  res.render("profile");
+});
+app.post("/signup", async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 8);
   try {
     await User.create({
@@ -55,7 +60,8 @@ app.post("/signUp", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ message: err });
   }
-  res.status(201).json({ message: "User created" });
+  // res.status(201).json({ message: "User created" });
+  res.redirect("/profile");
 });
 
 app.get("/paris", (req, res) => {
