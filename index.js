@@ -22,7 +22,8 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-
+//body du form login
+app.use(express.urlencoded({ extended: true }));
 app.engine("handlebars", handlebars.engine());
 app.set("view engine", "handlebars");
 
